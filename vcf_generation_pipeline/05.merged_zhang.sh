@@ -7,7 +7,7 @@ conda activate bcftools_env
 #Définir les répertoires
 BCF_DIR="/storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_156samplewithbutcommonwith2020_2023_n125/BCF/"
 OUT_DIR="/storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_156samplewithbutcommonwith2020_2023_n125/VCF/"
-#-m all mean "merge all sites" 
+#-m all = "merge all sites" 
 # Fusionner tous les fichiers BCF en un seul VCF.gz
 #cd /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_2023_n88/BCF/
 # for i in /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_2023_n88/BCF/*.bcf
