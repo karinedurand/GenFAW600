@@ -30,7 +30,7 @@ OUT_BCF="${OUT_DIR}${BAM_BASE}.bcf"
 OUT_BCF_FILTERED="${OUT_DIR}${BAM_BASE}.filtered.bcf"
 
 # # Étape 1 : appel des variants pour ce BAM
-bcftools mpileup -Ou -f ${REF} ${BAM_FILE}--annotate FORMAT/DPDP  -a | bcftools call -m -Ob -o ${OUT_BCF} --include-all-sites
+bcftools mpileup -Ou -f ${REF} ${BAM_FILE}--annotate FORMAT/DPDP  -a | bcftools call -m -Ob  -o "${OUT_BCF}"
 
 
 # Étape 2 : filtrage
