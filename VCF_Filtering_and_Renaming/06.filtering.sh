@@ -9,24 +9,64 @@ conda activate bcftools
 # ==============================
 # CONFIGURATION
 # ==============================
-VCF="/storage/simple/projects/faw_adaptation/Data_Backup/Merged_vcf/2025_GenFAW600/GenFAW600_rename.vcf.gz"
+VCF="/storage/simple/projects/faw_adaptation/Data_Backup/Merged_vcf/2025_GenFAW600/GenFAW600.rename.vcf.gz"
 
 MAX_MISSING=0.1
-MAF=0.01
-OUTDIR="VCF_filtered"
+OUTDIR="VCF_filtering"
 mkdir -p $OUTDIR
 
-
 #Biallélique 
-echo "[2] Filtre biallélique..."
-bcftools view -m2 -M2 -v snps "$OUTDIR/GenFAW600.rename.vcf" -Oz -o "$OUTDIR/step2_biallelic.vcf.gz"
-/storage/simple/projects/faw_adaptation/programs/htslib-1.9/tabix -p vcf "$OUTDIR/step2_biallelic.vcf.gz"
-echo "  SNPs restants : $(bcftools view -H VCF_steps/step2_biallelic.vcf.gz | wc -l)"
-echo
+/storage/simple/projects/faw_adaptation/programs/vcftools_0.1.13/bin/vcftools \
+  --gzvcf "$VCF" \
+  --max-alleles 2 \
+  --min-alleles 2 \
+  --max-missing 0.1 \
+  --recode \
+  --recode-INFO-all \
+  --out "$OUTDIR"/GenFAW600_filtered
 
-# max-missing
-echo "[3] Filtre max-missing ($MAX_MISSING)..."
-bcftools view -i "F_MISSING<=$MAX_MISSING" "$OUTDIR/step2_biallelic.vcf.gz" -Oz -o "$OUTDIR/step3_maxmissing.vcf.gz"
-/storage/simple/projects/faw_adaptation/programs/htslib-1.9/tabix -p vcf "$OUTDIR/step3_maxmissing.vcf.gz"
-echo "  SNPs restants : $(bcftools view -H VCF_steps/step3_maxmissing_0.1.vcf.gz | wc -l)"
-echo
+#  bgzip
+/storage/simple/projects/faw_adaptation/programs/htslib-1.9/bgzip -c "$OUTDIR"/GenFAW600_filtered.recode.vcf \
+  > "$OUTDIR"/GenFAW600_filtered.vcf.gz
+
+# Indexation tabix
+/storage/simple/projects/faw_adaptation/programs/htslib-1.9/tabix -p vcf "$OUTDIR"/GenFAW600_filtered.vcf.gz
+
+
+conda deactivate 
+source /home/durandk/miniconda3/etc/profile.d/conda.sh
+conda activate plink2
+# Step 4: Convert to PLINK binary format
+plink2 \
+  --vcf "$OUTDIR"/GenFAW600_filtered.vcf.gz \
+  --double-id \
+  --allow-extra-chr \
+  --make-bed \
+  --out "$OUTDIR"/GenFAW600_filtered
+
+  
+#plink --bfile VCF_steps/GenFAW600_filtered \
+#      --set-missing-var-ids @:#\$1,\$2 \
+#      --make-bed \
+#      --out VCF_steps/GenFAW600_cleanIDs
+
+
+# 2. Faire le LD pruning
+plink2 --bfile "$OUTDIR"/GenFAW600_filtered \
+      --indep-pairwise 50 5 0.2 \
+      --out "$OUTDIR"/GenFAW600_LDprune
+
+# 3. Extraire seulement les SNPs indépendants
+plink2 --bfile "$OUTDIR"/GenFAW600_filtered \
+      --extract "$OUTDIR"/GenFAW600_LDprune.prune.in \
+      --make-bed \
+      --out "$OUTDIR"/GenFAW600_Pruned
+
+# Step 8: Run PCA
+plink2 \
+  --bfile "$OUTDIR"/GenFAW600_Pruned \
+  --double-id \
+  --chr-set 29 \
+  --allow-extra-chr \
+  --pca \
+  --out "$OUTDIR"/GenFAW600.PCA_PLINK
