@@ -39,6 +39,7 @@ conda activate plink2
 # Step 4: Convert to PLINK binary format
 plink2 \
   --vcf "$OUTDIR"/GenFAW600_filtered.vcf.gz \
+  --chr-set 29 \
   --double-id \
   --allow-extra-chr \
   --make-bed \
