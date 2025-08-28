@@ -33,37 +33,35 @@ mkdir -p $OUTDIR
 /storage/simple/projects/faw_adaptation/programs/htslib-1.9/tabix -p vcf "$OUTDIR"/GenFAW600_filtered.vcf.gz
 
 
+
 conda deactivate 
 source /home/durandk/miniconda3/etc/profile.d/conda.sh
 conda activate plink2
-# Step 4: Convert to PLINK binary format
-plink2 \
-  --vcf "$OUTDIR"/GenFAW600_filtered.vcf.gz \
-  --chr-set 29 \
-  --double-id \
-  --allow-extra-chr \
-  --make-bed \
-  --out "$OUTDIR"/GenFAW600_filtered
-
+# Convert to PLINK binary format
   
-#plink --bfile VCF_steps/GenFAW600_filtered \
-#      --set-missing-var-ids @:#\$1,\$2 \
-#      --make-bed \
-#      --out VCF_steps/GenFAW600_cleanIDs
-
-
-# 2. Faire le LD pruning
-plink2 --bfile "$OUTDIR"/GenFAW600_filtered \
+plink2 --vcf "$OUTDIR"/GenFAW600_filtered.vcf.gz \
+     --chr-set 29 \
+     --set-missing-var-ids @:#\$1,\$2 \
+     --make-bed \
+     --double-id \
+     --allow-extra-chr \
+     --out "$OUTDIR"/GenFAW600_cleanIDs
+      
+      
+# LD pruning
+plink2 --bfile "$OUTDIR"/GenFAW600_cleanIDs \
+      --chr-set 29 \
       --indep-pairwise 50 5 0.2 \
       --out "$OUTDIR"/GenFAW600_LDprune
 
-# 3. Extraire seulement les SNPs indépendants
-plink2 --bfile "$OUTDIR"/GenFAW600_filtered \
+# Garder SNPs indépendants
+plink2 --bfile "$OUTDIR"/GenFAW600_cleanIDs \
+      --chr-set 29 \
       --extract "$OUTDIR"/GenFAW600_LDprune.prune.in \
       --make-bed \
       --out "$OUTDIR"/GenFAW600_Pruned
 
-# Step 8: Run PCA
+# Run PCA
 plink2 \
   --bfile "$OUTDIR"/GenFAW600_Pruned \
   --double-id \
