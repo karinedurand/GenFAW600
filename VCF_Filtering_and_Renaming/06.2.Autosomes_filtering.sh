@@ -49,30 +49,41 @@ conda activate bcftools
 # Index du VCF final (obligatoire pour bcftools, samtools, etc.)
 bcftools index GenFAW600_autosome.vcf.gz
 
-conda activate plink2
+conda activate vcftools
 
-plink2 \
-  --vcf GenFAW600_autosome.vcf.gz \
-  --make-bed \
-  --chr-set 29 \
-  --allow-extra-chr \
-  --set-all-var-ids @:#:\$r:\$a \
+vcftools \
+  --gzvcf GenFAW600_autosome.vcf.gz \
   --max-alleles 2 \
   --min-alleles 2 \
-  --max-missing 0.1 \
+  --remove-indels \
+  --recode \
+  --recode-INFO-all \
   --out GenFAW600_autosomes.filtered
+
 
 
 # ==============================
 # 3. Calculer la missingness
 # ==============================
 
-## Autosomes
-plink2 --bfile GenFAW600_autosomes.filtered \
-        --chr-set 29 \
-#       --allow-extra-chr \
-          --missing \
+conda activate plink2
+
+plink2 \
+  --vcf GenFAW600_autosomes.filtered.recode.vcf \
+  --make-bed \
+  --set-all-var-ids @:#:$r:$a \
+  --chr-set 29 \
+  --allow-extra-chr \
+  --out GenFAW600_autosomes.filtered
+
+
+plink2 \
+  --bfile GenFAW600_autosomes.filtered \
+  --chr-set 29 \
+  --allow-extra-chr \
+  --missing \
   --out GenFAW600_autosomes.filtered_missing
+
 
 
 
