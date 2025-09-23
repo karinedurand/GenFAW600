@@ -1,6 +1,5 @@
 #!/bin/bash
-#SBATCH -p cpu-dedicated
-#SBATCH --account dgimi-eha
+#SBATCH -p cpu-ondemand
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8
 
@@ -14,71 +13,63 @@ conda activate bcftools
 # ==============================
 # CONFIG
 # ==============================
-OUTDIR="/storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/ALL"
 
-bcftools concat    --threads 4   --output-type z  --output GenFAW600_Whole.vcf.gz GenFAW600_autosome.vcf.gz GenFAW600_rename_29.vcf.gz 
+
+#bcftools concat    --threads 4   --output-type z  --output GenFAW600_Whole.vcf.gz GenFAW600_autosome.vcf.gz GenFAW600_rename_29.vcf.gz 
  
-bcftools index GenFAW600_Whole.vcf.gz
+#bcftools index GenFAW600_Whole.vcf.gz
 
 
 # ==============================
 # Conversion en PLINK
 # ==============================
 conda activate plink2
+cd /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/VCF_filtering/ALL
 
-plink2 \
-  --vcf GenFAW600_Whole.vcf.gz \
-  --import-max-alleles 2 \       
-  --set-all-var-ids '@:#:$r:$a' \ 
-  --chr-set 29 \
-  --allow-extra-chr \
-  --make-bed \
-  --out GenFAW600_Whole.filtered
+#plink2  --vcf GenFAW600_Whole.vcf.gz \
+#  --make-bed \
+#  --set-all-var-ids  '@:#:$r:$a' \
+#  --chr-set 29 \
+#  --allow-extra-chr \
+#  --out GenFAW600_Whole
 
 
+#plink2 --bfile GenFAW600_Whole \
+#       --chr-set 29 \
+#       --allow-extra-chr \
+#       --missing \
+#        -out GenFAW600_Whole_missing
 
 plink2 --bfile GenFAW600_Whole \
-       --chr-set 29 \
-       --allow-extra-chr \
-       --missing \
-        -out GenFAW600_Whole
-
-#plink2 --bfile GenFAW600_ALL \
-#  --chr-set 29 \
-#  --allow-extra-chr \
-#  --remove GenFAW600_All_top_removesample.txt \
-#  --make-bed \
-#  --out GenFAW600_ALL_573
+  --chr-set 29 \
+  --allow-extra-chr \
+  --import-max-alleles 2 \
+  --remove remove_samples_whole_0.85.txt \
+  --make-bed \
+  --out GenFAW600_Whole_569
   
-#plink2 --bfile GenFAW600_ALL_573 \
-#  --chr-set 29 \
-#  --allow-extra-chr \
-#  --set-all-var-ids @:#:\$r:\$a \
-#  --make-bed \
-#  --out GenFAW600_ALL_573_uniq
 
-#plink2 --bfile GenFAW600_ALL_573_uniq \
-#  --chr-set 29 \
-#  --allow-extra-chr \
-#  --indep-pairwise 50 5 0.2 \
-#  --out GenFAW600_ALL_573_LDprune
+plink2 --bfile GenFAW600_Whole_569 \
+	  --chr-set 29 \
+	  --allow-extra-chr \
+	  --indep-pairwise 50 5 0.2 \
+	  --out GenFAW600_Whole_569_LDprune
 
-#plink2 --bfile GenFAW600_ALL_573_uniq \
-#  --chr-set 29 \
-#  --allow-extra-chr \
-#  --extract GenFAW600_ALL_573_LDprune.prune.in \
-#  --make-bed \
-#  --out GenFAW600_ALL_573_Pruned
+plink2 --bfile GenFAW600_Whole_569 \
+	  --chr-set 29 \
+	  --allow-extra-chr \
+	  --extract GenFAW600_Whole_569_LDprune.prune.in \
+	  --make-bed \
+	  --out GenFAW600_Whole_569_Pruned
 
 # ==============================
 # PCA
 # ==============================
-#plink2 --bfile GenFAW600_ALL_573_Pruned \
-#   --chr-set 29 \
-#  --allow-extra-chr \
-#  --pca \
-#  --out GenFAW600_ALL_573_PCA
-
+plink2 --bfile GenFAW600_Whole_569_Pruned \
+	   --chr-set 29 \
+	  --allow-extra-chr \
+	  --pca \
+	  --out GenFAW600_Whole_569_Pruned_PCA
 
 
 
