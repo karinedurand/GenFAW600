@@ -25,16 +25,16 @@ bcftools index GenFAW600_Whole.vcf.gz
 # Conversion en PLINK
 # ==============================
 conda activate plink2
-echo "=== Conversion VCF → PLINK ==="
-plink2 --vcf GenFAW600_Whole \
-       --make-bed \
-       --chr-set 29 \
-       --allow-extra-chr \
-       --set-all-var-ids @:#:\$r:\$a \
-       --max-alleles 2 \
-       --min-alleles 2 \
-       --max-missing 0.1 \
-       --out GenFAW600_Whole
+
+plink2 \
+  --vcf GenFAW600_Whole.vcf.gz \
+  --import-max-alleles 2 \       
+  --set-all-var-ids '@:#:$r:$a' \ 
+  --chr-set 29 \
+  --allow-extra-chr \
+  --make-bed \
+  --out GenFAW600_Whole.filtered
+
 
 
 plink2 --bfile GenFAW600_Whole \
