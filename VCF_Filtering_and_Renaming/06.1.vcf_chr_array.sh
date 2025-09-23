@@ -24,17 +24,27 @@ echo "=== Conversion chromosome $CHR ==="
   --recode-INFO-all \
   --out "$OUTDIR/GenFAW600_${CHR}"
 
-#echo "Fin conversion chr $CHR"
-
-# Initialize Conda (adjust path to your Conda installation)
 source /home/durandk/miniconda3/etc/profile.d/conda.sh
-conda activate bgzip_tabix
 
-CHR="${SLURM_ARRAY_TASK_ID}"
-# Rename chromosomes and compress the output 
-cat /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/VCF_filtering/GenFAW600_HiC_scaffold_"$CHR".recode.vcf | sed 's/^HiC_scaffold_\([0-9]\+\)/\1/' | bgzip -c > "$OUTDIR/GenFAW600_rename_${CHR}.vcf.gz"
+# renamed
+CHR_SCAFFOLD="HiC_scaffold_${SLURM_ARRAY_TASK_ID}"
+CHR_NUM="${SLURM_ARRAY_TASK_ID}"
 
-# Index the renamed VCF
-tabix -p vcf "$OUTDIR/GenFAW600_rename_${CHR}.vcf.gz"
+conda activate bcftools
 
 
+CHR_MAPPING="chr_mapping_${CHR_NUM}.txt"
+echo -e "${CHR_SCAFFOLD}\t${CHR_NUM}" > "$CHR_MAPPING"
+
+
+# 
+bcftools annotate \
+    --rename-chrs "$CHR_MAPPING" \
+    "$OUTDIR/GenFAW600_${CHR_SCAFFOLD}.recode.vcf" \
+    -O z \
+    -o "$OUTDIR/GenFAW600_rename_${CHR_NUM}.vcf.gz"
+
+#
+conda activate bgzip_tabix  
+
+tabix -p vcf "$OUTDIR/GenFAW600_rename_${CHR_NUM}.vcf.gz"
