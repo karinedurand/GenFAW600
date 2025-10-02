@@ -8,6 +8,4 @@
 
 module load statistics/R/4.3.0
 
-
-#Rscript ped2geno.R GenFAW600_geno0.8_filt.ped  GenFAW600_geno0.8_filt
 Rscript ped2geno.R 
