@@ -1,5 +1,6 @@
 #!/bin/bash
-#SBATCH -p cpu-ondemand
+#SBATCH -p cpu-dedicated
+#SBATCH --account=dedicated-cpu@dgimi-eha
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=8
 
