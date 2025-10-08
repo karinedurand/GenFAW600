@@ -55,3 +55,7 @@ bcftools merge --threads 8 --force-samples -r $CHR \
     -Oz -o ${OUTDIR}/ALL_${CHR}.vcf.gz
 
 bcftools index ${OUTDIR}/ALL_${CHR}.vcf.gz
+
+bcftools annotate --rename-chrs rename.txt -Oz -o "$VCF_OUT.gz" "$VCF_IN"
+bcftools index "$VCF_OUT.gz"
+
