@@ -2,6 +2,8 @@
 #SBATCH -p cpu-dedicated
 #SBATCH --account=dedicated-cpu@dgimi-eha
 #SBATCH --mem=40G
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
 
 source /storage/simple/users/durandk/miniconda3/etc/profile.d/conda.sh
 conda activate vcftools
@@ -40,25 +42,10 @@ conda activate vcftools
 
 vcftools --gzvcf /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_156samplewithbutcommonwith2020_2023_n125/VCF/zhang_37.snp.noindel.vcf.gz      --remove remove_sample_MISS_zhang37.txt --recode --recode-INFO-all --out zhang_37_clean
 
-source /storage/simple/users/durandk/miniconda3/etc/profile.d/conda.sh
-conda activate bcftools
-bcftools merge --force-samples \
-	Schlum_clean.recode.vcf \
-	yainna_clean.recode.vcf \
-	/storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_2020_n106/VCF/Zhang_2020.snp.noindel.bgzip.gz \
-	/storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_156samplewithbutcommonwith2020_2023_n125/VCF/zhang_2023.snp.noindel.vcf.gz \
-	zhang_37_clean.recode.vcf  \
-  -Oz -o ALL_102025.vcf.gz
-
-bcftools index ALL_102025.vcf.gz
-
-
-
-#bcftools query -l /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Schlum_PRJNA640063_n55/VCF/Schlum_PRJNA640063.snp.noindel.vcf.gz
-#bcftools query -l /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Yainna_2022_n203/VCF/Yainna_2022.snp.noindel.bgzip.vcf.gz \
-#bcftools query -l /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_2020_n106/VCF/Zhang_2020.snp.noindel.bgzip.gz \
-#bcftools query -l  /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_156samplewithbutcommonwith2020_2023_n125/VCF/zhang_2023.snp.noindel.vcf.gz 
-#bcftools query -l /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_156samplewithbutcommonwith2020_2023_n125/VCF/Zhang_37.snp.noindel.vcf.gz
-#bcftools query -l/storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/CNP0001020_GUI_n163/VCF/GUI.snp.noindel.vcf.gz
-#bcftools query -l ALLsnp.noindel.vcf.gz
-
+conda activate bgzip_tabix
+#bgzip -c Schlum_clean.recode.vcf > Schlum_clean.recode.vcf.gz
+#tabix -p vcf Schlum_clean.recode.vcf.gz
+#bgzip -c yainna_clean.recode.vcf  > yainna_clean.recode.vcf.gz
+#tabix -p vcf yainna_clean.recode.vcf.gz
+bgzip -c zhang_37_clean.recode.vcf> zhang_37_clean.recode.vcf.gz
+tabix -p vcf zhang_37_clean.recode.vcf.gz
