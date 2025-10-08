@@ -46,16 +46,15 @@ OUTDIR=/storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/VCF202510_new
 mkdir -p $OUTDIR
 cd $OUTDIR
 
-bcftools merge --threads 8 --force-samples -r $CHR \
-    /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/Schlum_clean.recode.vcf.gz \
-    /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/yainna_clean.recode.vcf.gz \
-    /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_2020_n106/VCF/Zhang_2020.snp.noindel.vcf.gz \
-    /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_156samplewithbutcommonwith2020_2023_n125/VCF/zhang_2023.snp.noindel.vcf.gz \
-    /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/zhang_37_clean.recode.vcf.gz \
-    -Oz -o ${OUTDIR}/ALL_${CHR}.vcf.gz
+#bcftools merge --threads 8 --force-samples -r $CHR \
+#    /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/Schlum_clean.recode.vcf.gz \
+#    /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/yainna_clean.recode.vcf.gz \
+#    /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_2020_n106/VCF/Zhang_2020.snp.noindel.vcf.gz \
+#    /storage/simple/projects/faw_adaptation/Data_Backup/sfrugiperda_SNP/Zhang_PRJNA591441_156samplewithbutcommonwith2020_2023_n125/VCF/zhang_2023.snp.noindel.vcf.gz \
+#    /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/zhang_37_clean.recode.vcf.gz \
+#    -Oz -o ${OUTDIR}/ALL_${CHR}.vcf.gz
 
-bcftools index ${OUTDIR}/ALL_${CHR}.vcf.gz
+#bcftools index ${OUTDIR}/ALL_${CHR}.vcf.gz
 
-bcftools annotate --rename-chrs rename.txt -Oz -o "$VCF_OUT.gz" "$VCF_IN"
-bcftools index "$VCF_OUT.gz"
-
+bcftools annotate --rename-chrs rename.txt -Oz -o "ALL_rename_${CHR}.gz" "ALL_${CHR}.vcf.gz"
+bcftools index "ALL_rename_${CHR}.gz"
