@@ -4,9 +4,38 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 
+#################################################################################################################################
+#first script to run in array to estimate contamination
+#################################################################################################################################
+source /home/durandk/miniconda3/etc/profile.d/conda.sh
+conda activate kraken2
 
+LIST_FILE="list_sample"
+ID=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$LIST_FILE")
+
+# Définir les chemins des fichiers FASTQ et des sorties
+FASTQ1="/storage/simple/users/durandk/scratch_durandk/GenFAW600/FastaQC/${ID}_R1.fastq.gz"
+FASTQ2="/storage/simple/users/durandk/scratch_durandk/GenFAW600/FastaQC/${ID}_R2.fastq.gz"
+OUTPUT="${ID}.resultat"
+REPORT="${ID}.rapport"
+
+# 
+kraken2 \
+  --db /storage/simple/users/durandk/scratch_durandk/kraken/Kraken2_Standard_Fev2019 \
+  --threads $SLURM_CPUS_PER_TASK \
+  --gzip-compressed \
+  --paired \
+  --output "$OUTPUT" \
+  --report "$REPORT" \
+  "$FASTQ1" "$FASTQ2"
+
+######################################################################################################################
+# Quality control step: Samples showing >10% bacterial contamination
+# based on Kraken taxonomic classification were excluded from further analysis
+##########################################################################################################################  
 source /storage/simple/users/durandk/miniconda3/etc/profile.d/conda.sh
 conda activate vcftools
+
 
 cd /storage/simple/users/durandk/scratch_durandk/GenFAW600/VCF/VCF202510_new
 # === Vérification qualité des individus par subset ===
