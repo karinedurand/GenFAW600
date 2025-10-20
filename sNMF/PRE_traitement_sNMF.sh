@@ -2,17 +2,13 @@
 #SBATCH -p cpu-ondemand
 #SBATCH --mem=120G
 
-
-module load bioinfo-cirad
-module load java/jre1.8.0_31
-
-cd /lustre/durandk/GenFAW600/sNMF/
-
 source /home/durandk/miniconda3/etc/profile.d/conda.sh
 conda activate plink2
-plink2 --bfile GenFAW600_Whole_569_Pruned \
- 	--chr-set 29 \
- 	--allow-extra-chr \
-       --geno 0.8 \
-       --recode vcf  \
-       --out GenFAW600_geno0.8
+cd /storage/simple/users/durandk/scratch_durandk/GenFAW600/sNMF/Alpha100/
+plink2 \
+  --bfile /storage/simple/users/durandk/scratch_durandk/GenFAW600/PCA_596ind/PCA_ALL/GenFAW600_Whole_biallelic_geno08_Pruned0.5 \
+  --chr-set 29 \
+  --allow-extra-chr \
+  --remove remove_ASW7.txt \
+  --recode vcf \
+  --out GenFAW600_Whole_biallelic_geno08_Pruned0.5_noASW7
