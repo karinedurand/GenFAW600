@@ -20,19 +20,15 @@ bcftools view \
 conda activate bgzip_tabix
 tabix -p vcf SRR5132437.filtered_chr1-29.vcf.gz
 
-cd /storage/simple/users/durandk/scratch_durandk/GenFAW600/Treemix
+cd /storage/simple/projects/faw_adaptation/Data_Backup/Merged_vcf/2025_GenFAW600/whole_genome/without_lab_strain
+
+tabix -p vcf /storage/simple/projects/faw_adaptation/Data_Backup/Merged_vcf/2025_GenFAW600/whole_genome/without_lab_strain/GenFAW600_Whole_biallelic_geno08_Pruned0.5_noASW7_v42.vcf.gz 
+
+
 conda activate bcftools
 
-bcftools merge /storage/simple/projects/faw_adaptation/Data_Backup/Merged_vcf/2025_GenFAW600/whole_genome/GenFAW600_Whole_nocontaminated.vcf.gz.recode.vcf.gz /storage/simple/projects/faw_adaptation/Data_Backup/Merged_vcf/2025_outgroup/SRR5132437.filtered_chr1-29.vcf.gz -Oz -o treemix.vcf.gz --threads 4
-
-# filtering 
-conda activate vcftools
-vcftools --gzvcf treemix.vcf.gz  --remove-indels --min-alleles 2 --max-alleles 2 --recode   --recode-INFO-all --out treemix_input.vcf
-
-conda activate bgzip_tabix
-
-bgzip -c treemix_input.vcf.recode.vcf > treemix_input.vcf.recode.vcf.gz
-tabix -p vcf treemix_input.vcf.recode.vcf.gz
+bcftools merge GenFAW600_Whole_biallelic_geno08_Pruned0.5_noASW7_v42.vcf.gz   /storage/simple/projects/faw_adaptation/Data_Backup/Merged_vcf/2025_outgroup/SRR5132437.filtered_chr1-29.vcf.gz \
+-Oz -o /storage/simple/users/durandk/scratch_durandk/GenFAW600/Treemix/treemix.vcf.gz --threads 4
 
 
 
