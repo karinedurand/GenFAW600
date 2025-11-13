@@ -39,32 +39,32 @@ conda activate plink2
 #plink2 --bfile GenFAW600_Whole_biallelic \
 #	  --chr-set 29 \
 #	  --allow-extra-chr \
-#	  --geno 0.2 \
+#	  --geno 0.8\
 #	  --make-bed \
-#	  --out GenFAW600_Whole_biallelic_geno0.2
+#	  --out GenFAW600_Whole_biallelic_geno0.8
 
 
-#plink2 --bfile GenFAW600_Whole_biallelic_geno0.2 \
+#plink2 --bfile GenFAW600_Whole_biallelic_geno0.8 \
 #	  --chr-set 29 \
 #	  --allow-extra-chr \
 #	  --indep-pairwise 50 5 0.5 \
-#	  --out GenFAW600_Whole_biallelic_geno0.2
+#	  --out GenFAW600_Whole_biallelic_geno0.8
 
-#plink2 --bfile GenFAW600_Whole_biallelic_geno0.2 \
+#plink2 --bfile GenFAW600_Whole_biallelic_geno0.8 \
 #	  --chr-set 29 \
 #	  --allow-extra-chr \
-#	  --extract GenFAW600_Whole_biallelic_geno0.2.prune.in \
+#	  --extract GenFAW600_Whole_biallelic_geno0.8.prune.in \
 #	  --make-bed \
-#	  --out GenFAW600_Whole_biallelic_geno0.2_Pruned0.5
+#	  --out GenFAW600_Whole_biallelic_geno0.8_Pruned0.5
 
 # ==============================
 # PCA #--geno 0.2: eliminates SNPs with more than 20% missing, retaining those with at least 80% of data present.
 # ==============================
-plink2 --bfile GenFAW600_Whole_biallelic_geno0.2_Pruned0.5 \
+plink2 --bfile GenFAW600_Whole_biallelic_geno0.8_Pruned0.5 \
 	   --chr-set 29 \
 	  --allow-extra-chr \
 	  --pca \
-	  --out GenFAW600_Whole_biallelic_geno0.2_Pruned0.5_PCA
+	  --out GenFAW600_Whole_biallelic_geno0.8_Pruned0.5_PCA
 
 
 
